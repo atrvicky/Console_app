@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Console test page</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        
+    </head>
+    
+    <body>
+                
+        <button value="Submit" onclick="submit()">Submit</button>
+        <input value="" id="url">
+        <button value="Connect" onclick="connect()" id="connect">Connect</button>
+        <input value="" id="command">
+        <button value="Send" id="send">Send</button>
+        <div id="output">
+
+        </div>
+        
+        <script src="jquery.min.js"></script>
+        
+        <script>
+            // the webrepl uses telnet protocol. this can be implemented using a WebSocket
+
+            var ws;
+            var output = document.getElementById('output');
+            var connected = false;
+            var connect_button = document.getElementById('connect');
+            var send_button = document.getElementById('send');
+
+            var connect = () => {
+                if (connected){
+                    ws.close();
+                } else {
+                    // grab the console ip address
+                    var url = document.getElementById('url').value;
+
+                    // iniatiate the web socket
+                    ws = new WebSocket(url);
+
+                    // set connection status flag as True
+                    connect = true;
+                    connect_button.innerHTML = 'Disconnect';
+
+                    // web socket event listeners
+                    ws.onopen = () => {
+                        var div = '<div>\'Socket open!\'</div><br>';
+                        output.innerHTML = div;
+
+                        // this prints the incoming messages from the console
+                        ws.onmessage = (event) => {
+                            console.log(event);
+                            div = output.innerHTML + event.data;
+                            if (event.data === "\r\n"){
+                                div += '<br><div></div><br>'; 
+                            }
+                            output.innerHTML = div;
+                        }
+                    }
+
+                    ws.onclose = () => {
+                        connected = false;
+                        connect_button.innerHTML = 'Connect';
+                    }
+
+                    // send data to the console
+                    send_button.onclick = () => {
+                        var comm = document.getElementById('command').value;
+                        // strip off default LF and EOL characters
+                        comm = comm.replace(/\n/g, "");
+                        // add manual EOL
+                        comm = comm + "\r\n";
+                        console.log(comm);
+                        ws.send(comm); 
+                    }
+                }                
+            }
+
+            var submit = () => {
+                var url = 'http://192.168.1.100';
+                var data = {
+                    name: 'banana',
+                    type: 'fruit'
+                };
+                $.post(url, data, (d, s) => {
+                    alert ('Data: ' + d + 'Status: ' + s);
+                });
+            }
+
+        </script>
+    </body>
+</html>
