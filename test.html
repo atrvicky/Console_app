@@ -5,8 +5,6 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <title>Console test page</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
-
-        
     </head>
     
     <body>
@@ -80,7 +78,9 @@
             }
 
             var submit = () => {
-                var url = 'http://192.168.1.100';
+                var url = document.getElementById('url').value;
+                url = 'http' + url.substring(2,url.length - 5);
+                console.log(url);
                 var data = {
                     name: 'banana',
                     type: 'fruit'

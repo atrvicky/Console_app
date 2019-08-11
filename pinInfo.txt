@@ -1,0 +1,90 @@
+The MCUPin mappings for console
+
+NodeMCU on-board LED (NOT recommended to use!) -> MCUPin 2, MCUPin 16
+Console Busy LED -> MCUPin 0
+
+The GPIO pin on the console and their mcu mapping:
+
+--------------------------------------
+|  Console value	|		MCUPinNo  |
+--------------------------------------
+|		GPIO 0 		| 		    3	  |
+|		GPIO 1		| 		    4	  |
+|		GPIO 2		| 		    5	  |
+|		GPIO 3		| 		    9	  |
+|		GPIO 4		| 		   15	  |
+|		GPIO 5		| 		   13	  |
+|		GPIO 6		| 		   12	  |
+|		GPIO 8		| 		   16	  |
+|		GPIO 7		| 		   14	  |
+--------------------------------------
+
+
+I2C pins -> scl=MCUPin(1) & sda=MCUPin(2)
+
+returned i2c addresses = 	32,		65,		112
+					   =	0x20,	0x41,	0x70
+
+I2C Addresses 	-> MCP23017		==	0010 0000	== 0X20
+				-> PCA9685 		==	0100 0001	== 0x41
+				
+Motor pin mapping:
+
+  ---------------------------------------------
+ |	Motor	|	PWM	   |	A	   |	B	   |
+  ---------------------------------------------
+ |	  1	    |  PCA(0)  |  PCA(2)   |  PCA(1)   |
+ |	  2		|  PCA(5)  |  PCA(3)   |  PCA(4)   |
+ |	  3		|  PCA(9)  |  PCA(11)  |  PCA(10)  |
+ |	  4		|  PCA(7)  |  PCA(8)   |  PCA(6)   |
+  ---------------------------------------------
+
+Infrared pin mapping:
+
+  ----------------------
+ | IR Sensor|	MCPPin 	|
+  ----------------------
+ |	  1	    |  	   B0	|
+ |	  2		|  	   B1	|
+  ----------------------
+  
+Ultrasound sensor pin mapping:
+
+  ----------------------
+ | US Sensor|	MCPPin 	|
+  ----------------------
+ |	 Trig   |  	   B2	|
+ |	 Echo	|  	   B3	|
+  ----------------------
+  
+ LED pin mapping:
+
+  ----------------------
+ |	LED		|	PCAPin 	|
+  ----------------------
+ |	  1	    |  	   14	|
+ |	  2		|  	   13	|
+ |	  3		|  	   12	|
+  ----------------------
+  
+ Acceletometer Pin Config -> MCUPin(10)
+ 
+ LCD pin config:
+
+  ----------------------
+ |	LCDPin	|	Pin		|
+  ----------------------
+ |Brightness|  PCA(15)	|
+ |	 D0		|  MCP(B4)	|
+ |	 D1		|  MCP(B5)	|
+ |	 D2		|  MCP(B6)	|
+ |	 D3		|  MCP(B7)	|
+ |	 D4		|  MCP(A4)	|
+ |	 D5		|  MCP(A3)	|
+ |	 D6		|  MCP(A2)	|
+ |	 D7		|  MCP(A1)	|
+ |	  K		|  MCP(A0)	|
+ |	 EN		|  MCP(A5)	|
+ |	 RW		|  MCP(A6)	|
+ |	 RS		|  MCP(A7)	|
+  ----------------------

@@ -1,7 +1,7 @@
 # This file is executed on every boot (including wake-boot from deepsleep)
 #import esp
 #esp.osdebug(None)
-import uos, machine
+import uos, machine, utime
 #uos.dupterm(None, 1) # disable REPL on UART(0)
 import gc
 import webrepl
@@ -9,7 +9,7 @@ webrepl.start()
 gc.collect()
 import os
 
-DEBUG = true    # enable or disable debugging
+DEBUG = True    # enable or disable debugging
 
 # Logger to print to the terminal when the debug flag is set True
 def log(msg):
@@ -71,3 +71,26 @@ def search_cfg(override):
                 pass
 
 search_cfg(True)
+
+
+#scans the i2c pins (1, 2) for devices
+#if nothing is returned, it resets the machine
+def scan_i2c():
+	i2c = machine.I2C(scl=machine.Pin(1), sda=machine.Pin(2))
+	scans = i2c.scan()
+	busy_led = machine.Pin(0, machine.Pin.OUT)
+	
+	if (len(scans) == 0):
+		log("No I2C device found! Reset device..")
+		busy_led.on()
+		utime.sleep(2)
+		busy_led.off()
+		utime.sleep_ms(200)
+		machine.reset()
+	else:
+		log("i2c found:")
+		for addr in scans:
+			log(hex(addr))
+		busy_led.off()
+		
+scan_i2c()

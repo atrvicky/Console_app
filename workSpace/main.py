@@ -18,5 +18,6 @@ while True:
   conn.send('HTTP/1.1 200 OK\n')
   conn.send('Content-Type: text/plain\n')
   conn.send('Connection: close\n\n')
+  conn.send('Access-Control-Allow-Origin: *')
   conn.sendall('Hello!')
   conn.close()
