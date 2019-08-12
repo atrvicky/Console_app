@@ -10,6 +10,8 @@ gc.collect()
 import os
 
 DEBUG = True    # enable or disable debugging
+pin = machine.Pin
+EV = False      # event loop flag
 
 # Logger to print to the terminal when the debug flag is set True
 def log(msg):
@@ -76,9 +78,9 @@ search_cfg(True)
 #scans the i2c pins (1, 2) for devices
 #if nothing is returned, it resets the machine
 def scan_i2c():
-	i2c = machine.I2C(scl=machine.Pin(1), sda=machine.Pin(2))
+	i2c = machine.I2C(scl=pin(1), sda=pin(2))
 	scans = i2c.scan()
-	busy_led = machine.Pin(0, machine.Pin.OUT)
+	busy_led = pin(0, pin.OUT)
 	
 	if (len(scans) == 0):
 		log("No I2C device found! Reset device..")
@@ -91,6 +93,22 @@ def scan_i2c():
 		log("i2c found:")
 		for addr in scans:
 			log(hex(addr))
-		busy_led.off()
+                busy_led.off()
+                utime.sleep(1)
 		
 scan_i2c()
+
+def intr(pin):
+        global EV
+        if not EV:
+                EV = True
+                global led_stat
+                led_stat.on()
+                main()
+                led_stat.off()
+                EV = False
+
+btn_flash = pin(0, pin.IN, pin.PULL_UP)
+led_stat = pin(16, pin.OUT)
+led_stat.off()
+btn_flash.irq(handler=intr, trigger=pin.IRQ_FALLING)

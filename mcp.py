@@ -56,9 +56,6 @@ class MCP():
         self.write_iodir()
         self.write_gppu()
 		
-	def scan(self):
-		return self.i2c.scan()
-
     def _validate_pin(self, pin):
         """Promoted to mcp implementation from prior Adafruit GPIO superclass"""
         # Raise an exception if pin is outside the range of allowed values.

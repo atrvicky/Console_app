@@ -1,7 +1,8 @@
 The MCUPin mappings for console
 
 NodeMCU on-board LED (NOT recommended to use!) -> MCUPin 2, MCUPin 16
-Console Busy LED -> MCUPin 0
+Console Busy LED 		-> MCUPin 0
+NodeMCU flash button 	-> MCUPin 0
 
 The GPIO pin on the console and their mcu mapping:
 
@@ -25,8 +26,9 @@ I2C pins -> scl=MCUPin(1) & sda=MCUPin(2)
 returned i2c addresses = 	32,		65,		112
 					   =	0x20,	0x41,	0x70
 
-I2C Addresses 	-> MCP23017		==	0010 0000	== 0X20
-				-> PCA9685 		==	0100 0001	== 0x41
+I2C Addresses 	-> MCP23017		==	32		==	0010 0000	== 0X20
+				-> PCA9685 		==	65		==	0100 0001	== 0x41
+				->				==	112		==	0111 0000	== 0x70
 				
 Motor pin mapping:
 
