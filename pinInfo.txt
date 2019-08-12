@@ -16,8 +16,8 @@ The GPIO pin on the console and their mcu mapping:
 |		GPIO 4		| 		   15	  |
 |		GPIO 5		| 		   13	  |
 |		GPIO 6		| 		   12	  |
-|		GPIO 8		| 		   16	  |
 |		GPIO 7		| 		   14	  |
+|		GPIO 8		| 		   16	  |
 --------------------------------------
 
 
