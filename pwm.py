@@ -45,6 +45,36 @@ def enableLED3(lux = 4095):
     """
     io.duty(12, lux)
 
+def toggleLED1():
+    """
+        Toggles the LED on pin 14 of the PCA driver
+    """
+    preset = io.duty(14)
+    if (preset > 0):
+        io.duty(14, 0)
+    else:
+        io.duty(14, 4095)
+
+def toggleLED2():
+    """
+        Toggles the LED on pin 13 of the PCA driver
+    """
+    preset = io.duty(13)
+    if (preset > 0):
+        io.duty(13, 0)
+    else:
+        io.duty(13, 4095)
+
+def toggleLED3():
+    """
+        Toggles the LED on pin 12 of the PCA driver
+    """
+    preset = io.duty(12)
+    if (preset > 0):
+        io.duty(12, 0)
+    else:
+        io.duty(12, 4095)
+
 def enableAll(lux = 4095):
     """
         Enables all the LEDs of the PCA driver
