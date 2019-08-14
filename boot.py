@@ -88,7 +88,12 @@ def scan_i2c():
 		utime.sleep(2)
 		busy_led.off()
 		utime.sleep_ms(200)
-		machine.reset()
+                # machine.reset()
+                while True:
+                        busy_led.on()
+                        utime.sleep(1)
+                        busy_led.off()
+                        utime.sleep(1)
 	else:
 		log("i2c found:")
 		for addr in scans:

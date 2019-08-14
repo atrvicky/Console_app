@@ -83,3 +83,10 @@ def pinStateListener(pinNo, _listener=None, _trigger=pin.IRQ_RISING):
         p.irq(handler=_listener, trigger=_trigger)
     else:
         pass
+
+def reset_all_pins():
+    for pinNo in range(0, 9):
+        pinNo = getMappedPin(pinNo)
+        p = pin(pinNo, pin.OUT)
+        p.off()
+        return p.value()
