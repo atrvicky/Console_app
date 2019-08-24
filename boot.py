@@ -113,7 +113,18 @@ def intr(pin):
                 led_stat.off()
                 EV = False
 
-btn_flash = pin(0, pin.IN, pin.PULL_UP)
 led_stat = pin(16, pin.OUT)
-led_stat.off()
-btn_flash.irq(handler=intr, trigger=pin.IRQ_FALLING)
+
+def liveMode(enable=True):
+        global led_stat
+        if (enable):
+                btn_flash = pin(0, pin.OUT)
+                led_stat.on()
+                log('liveMode')
+        else:
+                btn_flash = pin(0, pin.IN, pin.PULL_UP)
+                led_stat.off()
+                btn_flash.irq(handler=intr, trigger=pin.IRQ_FALLING)
+                log('eventMode')
+
+liveMode(False)
