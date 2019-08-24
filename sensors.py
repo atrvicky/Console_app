@@ -157,6 +157,7 @@ def clear():
     _delay_microseconds(3000)  # 3000 microsecond sleep, clearing the display takes a long time
 
 def set_cursor(col, row):
+    global lcd_rows
     """Move the cursor to an explicit column and row position."""
     # Clamp row to the last row of the display.
     if row > lcd_rows:
@@ -262,6 +263,17 @@ def _delay_microseconds(microseconds):
     end = time.time() + (microseconds/1000000.0)
     while time.time() < end:
         pass
+
+def set1604(mode=True):
+    global lcd_rows
+    """
+        Enable support for 16x4 mode
+    """
+    if (mode):
+        lcd_rows = 4
+    else:
+        lcd_rows = 2
+
 
 def _pulse_enable():
     # Pulse the clock enable line off, on, off to send command.

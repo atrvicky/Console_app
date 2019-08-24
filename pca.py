@@ -57,4 +57,3 @@ class PCA9685:
             self.pwm(index, 4096, 0)
         else:
             self.pwm(index, 0, value)
-
