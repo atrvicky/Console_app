@@ -10,7 +10,7 @@ _DC_MOTORS = {
 
 io = pca.PCA9685()
 
-io.freq(1600)
+io.freq(2000)
 
 mappedPin = {
     1 : 14,
@@ -136,7 +136,7 @@ def fade(LED, lux=4095, repeatFor=1):
             io.duty(LED, brightness)
     io.duty(LED, 0)
 
-# the motor controls
+# Motor controls
 def _pin(pin, value=None):
     if value is None:
         return bool(io.pwm(pin)[0])
@@ -178,3 +178,9 @@ def brakeMotor(index):
 def brakeAllMotors():
     for i in range(1, 5):
         brakeMotor(i)
+
+def setLCDBrightness(lux=2000):
+    """
+        Set the LCD brightness on PCA pin 15
+    """
+    io.duty(15, lux)
