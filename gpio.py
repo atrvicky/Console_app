@@ -1,4 +1,4 @@
-from machine import Pin as pin
+from machine import Pin as pin, PWM
 
 mappedPin = {
     0 : 3,
@@ -90,3 +90,22 @@ def reset_all_pins():
         p = pin(pinNo, pin.OUT)
         p.off()
         return p.value()
+
+# Servos
+def run_servo(pinNo, angle=None, freq=50):
+    servoPin = getMappedPin(pinNo)
+    servo = PWM(pin(servoPin))
+    servo.freq(freq)
+
+    if angle is not None:
+        duty = min(180, max(0, int(angle)))
+        servo.duty(duty)
+    else:
+        #return the angle of the servo
+        return servo.duty()
+
+
+def release_servo(pinNo):
+    servoPin = getMappedPin(pinNo)
+    servo = PWM(pin(servoPin))
+    servo.deinit()
