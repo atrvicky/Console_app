@@ -211,13 +211,16 @@ def set_right_to_left():
     displaymode &= ~LCD_ENTRYLEFT
     write8(LCD_ENTRYMODESET | displaymode)
 
-def autoscroll(autoscroll):
+def autoscroll(autoscroll, scrollDelay=0):
     global displaymode
+    delay=0
     if autoscroll:
         displaymode |= LCD_ENTRYSHIFTINCREMENT
+        delay = scrollDelay
     else:
+        delay=0
         displaymode &= ~LCD_ENTRYSHIFTINCREMENT
-    write8(LCD_ENTRYMODESET | displaymode)
+    write8(LCD_ENTRYMODESET | displaymode, delay)
 
 def message(text):
     line = 0
@@ -233,9 +236,9 @@ def message(text):
         else:
             write8(ord(char), True)
 
-def write8(value, char_mode=False):
+def write8(value, char_mode=False, scrollDelay=0):
     # One millisecond delay to prevent writing too quickly.
-    _delay_microseconds(250)
+    _delay_microseconds(scrollDelay)
     # Set character / data bit.
     io.output(lcd_rs, char_mode)
     # Write upper 4 bits.
