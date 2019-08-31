@@ -63,6 +63,7 @@ lcd_d4 = 4
 lcd_d5 = 3
 lcd_d6 = 2
 lcd_d7 = 1
+lcd_k = 0
 
 # Define LCD column and row size for 16x2 LCD.
 lcd_columns = 16
@@ -107,7 +108,8 @@ LCD_5x10DOTS = 0x04
 LCD_5x8DOTS = 0x00
 
 # Offset for up to 4 rows.
-LCD_ROW_OFFSETS = (0x00, 0x40, 0x14, 0x54)
+# LCD_ROW_OFFSETS = (0x00, 0x40, 0x14, 0x54)
+LCD_ROW_OFFSETS = (0x00, 0x40, 0x10, 0x50)
 
 # Char LCD plate GPIO numbers.
 LCD_PLATE_RS = 15
@@ -143,7 +145,7 @@ displayfunction = LCD_4BITMODE | LCD_1LINE | LCD_2LINE | LCD_5x8DOTS
 displaymode = LCD_ENTRYLEFT | LCD_ENTRYSHIFTDECREMENT
 
 # Setup all pins as outputs.
-for pin in (lcd_rs, lcd_en, lcd_d4, lcd_d5, lcd_d6, lcd_d7):
+for pin in (lcd_rs, lcd_en, lcd_d4, lcd_d5, lcd_d6, lcd_d7, lcd_k):
     io.setup(pin, mcp.OUT)
 
 def home():
@@ -211,12 +213,12 @@ def set_right_to_left():
     displaymode &= ~LCD_ENTRYLEFT
     write8(LCD_ENTRYMODESET | displaymode)
 
-def autoscroll(autoscroll, scrollDelay=0):
+def autoscroll(ascrl=False, scrlDelay=0):
     global displaymode
     delay=0
-    if autoscroll:
+    if ascrl:
         displaymode |= LCD_ENTRYSHIFTINCREMENT
-        delay = scrollDelay
+        delay = scrlDelay
     else:
         delay=0
         displaymode &= ~LCD_ENTRYSHIFTINCREMENT
@@ -235,6 +237,15 @@ def message(text):
         # Write the character to the display.
         else:
             write8(ord(char), True)
+
+def set_backlight(backlight):
+    """Enable or disable the backlight.  If PWM is not enabled (default), a
+    non-zero backlight value will turn on the backlight and a zero value will
+    turn it off.  If PWM is enabled, backlight can be any value from 0.0 to
+    1.0, with 1.0 being full intensity backlight.
+    """
+    io.output(lcd_k, (not backlight))
+    
 
 def write8(value, char_mode=False, scrollDelay=0):
     # One millisecond delay to prevent writing too quickly.
