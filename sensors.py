@@ -23,14 +23,16 @@ def readIR1():
     """
         Returns the state of IR1 at B0 of the MCP
     """
-    return io.input(8)
+    enableIR1()
+    return not(io.input(8))
 
 
 def readIR2():
     """
         Returns the state of IR2 at B1 of the MCP
     """
-    return io.input(9)
+    enableIR2()
+    return not(io.input(9))
 
 
 # The IR would be enabled by default. It could also be bypassed for some extra pin real-estate
@@ -151,12 +153,12 @@ for pin in (lcd_rs, lcd_en, lcd_d4, lcd_d5, lcd_d6, lcd_d7, lcd_k):
 def home():
     """Move the cursor back to its home (first line and first column)."""
     write8(LCD_RETURNHOME)  # set cursor position to zero
-    _delay_microseconds(3000)  # this command takes a long time!
+    # _delay_microseconds(3000)  # this command takes a long time!
 
 def clear():
     """Clear the LCD."""
     write8(LCD_CLEARDISPLAY)  # command to clear display
-    _delay_microseconds(3000)  # 3000 microsecond sleep, clearing the display takes a long time
+    # _delay_microseconds(50)  # 3000 microsecond sleep recommended, clearing the display takes a long time
 
 def set_cursor(col, row):
     global lcd_rows
@@ -264,6 +266,9 @@ def write8(value, char_mode=False, scrollDelay=0):
                                 lcd_d6: ((value >> 2) & 1) > 0,
                                 lcd_d7: ((value >> 3) & 1) > 0 })
     _pulse_enable()
+
+    enableIR1()
+    enableIR2()
 
 def create_char(location, pattern):
     # only position 0..7 are allowed

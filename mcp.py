@@ -20,18 +20,19 @@
 # THE SOFTWARE.
 from machine import Pin, I2C
 
-OUT     = 0
-IN      = 1
-HIGH    = True
-LOW     = False
+OUT = 0
+IN = 1
+HIGH = True
+LOW = False
 
-RISING  = 1
+RISING = 1
 FALLING = 2
-BOTH    = 3
+BOTH = 3
 
 PUD_OFF = 0
-PUD_DOWN= 1
-PUD_UP  = 2
+PUD_DOWN = 1
+PUD_UP = 2
+
 
 class MCP():
     """Base class to represent an MCP230xx series GPIO extender.  Is compatible
@@ -44,23 +45,38 @@ class MCP():
         is not specified it will default to the appropriate platform detected bus.
         """
         self.address = address
-        self.i2c = I2C(scl=Pin(gpioScl),sda=Pin(gpioSda))
+        self.i2c = I2C(scl=Pin(gpioScl), sda=Pin(gpioSda))
         # Assume starting in ICON.BANK = 0 mode (sequential access).
+        """# Compute how many bytes are needed to store count of GPIO.
+        self.gpio_bytes = self.NUM_GPIO//8
+        # Buffer register values so they can be changed without reading.
+        # Default direction to all inputs.
+        self.iodir = bytearray(self.gpio_bytes)
+        self.gppu = bytearray(self.gpio_bytes)  # Default to pullups disabled.
+        self.gpio = bytearray(self.gpio_bytes)
+        # Write current direction and pullup buffer state.
+        self.write_iodir()
+        self.write_gppu()"""
+        self.soft_reset()
+
+    def soft_reset(self):
         # Compute how many bytes are needed to store count of GPIO.
         self.gpio_bytes = self.NUM_GPIO//8
         # Buffer register values so they can be changed without reading.
-        self.iodir = bytearray(self.gpio_bytes)  # Default direction to all inputs.
+        # Default direction to all inputs.
+        self.iodir = bytearray(self.gpio_bytes)
         self.gppu = bytearray(self.gpio_bytes)  # Default to pullups disabled.
         self.gpio = bytearray(self.gpio_bytes)
         # Write current direction and pullup buffer state.
         self.write_iodir()
         self.write_gppu()
-		
+
     def _validate_pin(self, pin):
         """Promoted to mcp implementation from prior Adafruit GPIO superclass"""
         # Raise an exception if pin is outside the range of allowed values.
         if pin < 0 or pin >= self.NUM_GPIO:
-            raise ValueError('Invalid GPIO value, must be between 0 and {0}.'.format(self.NUM_GPIO))
+            raise ValueError(
+                'Invalid GPIO value, must be between 0 and {0}.'.format(self.NUM_GPIO))
 
     def writeList(self, register, data):
         """Introduced to match the writeList implementation of the Adafruit I2C _device member"""
@@ -84,7 +100,6 @@ class MCP():
             raise ValueError('Unexpected value.  Must be IN or OUT.')
         self.write_iodir()
 
-
     def output(self, pin, value):
         """Set the specified pin the provided high/low value.  Value should be
         either HIGH/LOW or a boolean (True = HIGH).
@@ -98,11 +113,14 @@ class MCP():
         """
         [self._validate_pin(pin) for pin in pins.keys()]
         # Set each changed pin's bit.
-        for pin, value in iter(pins.items()):
-            if value:
-                self.gpio[int(pin/8)] |= 1 << (int(pin%8))
-            else:
-                self.gpio[int(pin/8)] &= ~(1 << (int(pin%8)))
+        try:
+            for pin, value in iter(pins.items()):
+                if value:
+                    self.gpio[int(pin/8)] |= 1 << (int(pin%8))
+                else:
+                    self.gpio[int(pin/8)] &= ~(1 << (int(pin%8)))
+        except TypeError:
+            self.soft_reset()
         # Write GPIO state.
         self.write_gpio()
 
