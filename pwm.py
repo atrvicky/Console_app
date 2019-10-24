@@ -10,7 +10,7 @@ _DC_MOTORS = {
 
 io = pca.PCA9685()
 
-io.freq(2000)
+io.freq(100)
 
 mappedPin = {
     1 : 14,

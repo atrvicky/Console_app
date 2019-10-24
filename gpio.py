@@ -1,4 +1,5 @@
 from machine import Pin as pin, PWM
+import math
 
 mappedPin = {
     0 : 3,
@@ -11,6 +12,27 @@ mappedPin = {
     7 : 14,
     8 : 16
 }
+
+def dutyCycleMap(x):
+    """
+        If your number X falls between A and B, and you would like Y to fall between C and D, you can apply the following linear transform:
+        Y = (X-A)/(B-A) * (D-C) + C
+
+        @param x {int}: dutyCycle in microSeconds
+        Returns the dutycycle between 0 and 1023 for inputs ranging from 1000 and 2000
+
+        The frequency is 50 Hz
+        So, the minimum dutyCycle is 0 microseconds
+        And the maximum dutyCycle is 20 milliseconds = 20000 microseconds = 20000
+        The dutyCycle ranges from 500 uS for 0 degree and 2500 uS for 180 degree (empirical)
+    """
+    # limit x between 500 and 2500
+    if (x < 500):
+        x = 500
+    if (x > 2500):
+        x = 2500
+
+    return math.ceil((x) / (20000) * (1023))
 
 def getMappedPin(inPin):
     """
@@ -98,8 +120,11 @@ def run_servo(pinNo, angle=None, freq=50):
     servo.freq(freq)
 
     if angle is not None:
-        duty = min(180, max(0, int(angle)))
-        servo.duty(duty)
+        # limit the angle between 0 and 180
+        angle = min(180, max(0, int(angle)))
+        # map the angle to microseconds from (0-180) to (500-2500)
+        us = math.ceil((angle - 0) / (180) * (2000) + 500)
+        servo.duty(dutyCycleMap(us))
     else:
         #return the angle of the servo
         return servo.duty()
