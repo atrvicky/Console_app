@@ -1,5 +1,5 @@
 from machine import Pin as pin, PWM
-import math
+import math, time
 
 mappedPin = {
     0 : 3,
@@ -24,15 +24,27 @@ def dutyCycleMap(x):
         The frequency is 50 Hz
         So, the minimum dutyCycle is 0 microseconds
         And the maximum dutyCycle is 20 milliseconds = 20000 microseconds = 20000
-        The dutyCycle ranges from 500 uS for 0 degree and 2500 uS for 180 degree (empirical)
+        The dutyCycle ranges from 1000 uS (1.0ms) for 0 degree and 2000 uS (2.0ms) for 180 degree (empirical)
     """
-    # limit x between 500 and 2500
-    if (x < 500):
-        x = 500
-    if (x > 2500):
-        x = 2500
+    # limit x between 1000 and 2000
+    if (x < 1000):
+        x = 1000
+    if (x > 2000):
+        x = 2000
 
-    return math.ceil((x) / (20000) * (1023))
+    dcm = math.floor((x-1000) / (19000) * (1023))
+
+    '''
+        for 50 Hz, the dcm values would be
+        0 deg - 51
+        50 deg - 55
+        90 deg - 76
+        130 deg - 100
+        180 deg - 102
+    '''
+
+    print('dc: ' + str(dcm))
+    return dcm
 
 def getMappedPin(inPin):
     """
@@ -106,7 +118,7 @@ def pinStateListener(pinNo, _listener=None, _trigger=pin.IRQ_RISING):
     else:
         pass
 
-def reset_all_pins():
+def resetAllPins():
     for pinNo in range(0, 9):
         pinNo = getMappedPin(pinNo)
         p = pin(pinNo, pin.OUT)
@@ -114,23 +126,33 @@ def reset_all_pins():
         return p.value()
 
 # Servos
-def run_servo(pinNo, angle=None, freq=50):
-    servoPin = getMappedPin(pinNo)
+def runServo(pinNo, angle=None, override=False, freq=50):
+    if not override:
+        servoPin = getMappedPin(pinNo)
+    else:
+        servoPin = pinNo
     servo = PWM(pin(servoPin))
     servo.freq(freq)
 
     if angle is not None:
         # limit the angle between 0 and 180
         angle = min(180, max(0, int(angle)))
-        # map the angle to microseconds from (0-180) to (500-2500)
-        us = math.ceil((angle - 0) / (180) * (2000) + 500)
-        servo.duty(dutyCycleMap(us))
+        # map the angle to microseconds from (0-180) to (1000-2000)
+        us = math.ceil((angle) / (180) * (1000) + 1000)
+        print(us)
+        servo.duty(dutyCycleMap(us))        
+        return servo
     else:
         #return the angle of the servo
         return servo.duty()
 
 
-def release_servo(pinNo):
-    servoPin = getMappedPin(pinNo)
+def releaseServo(pinNo, override=False):
+    if not override:
+      servoPin = getMappedPin(pinNo)
+    else:
+      servoPin = pinNo
     servo = PWM(pin(servoPin))
     servo.deinit()
+
+
