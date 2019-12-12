@@ -1,23 +1,12 @@
-import boot
-import usocket as socket
-import ubinascii
+import utime
+from machine import Pin as pin
 
-sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-sock.bind(('', 80))
-sock.listen(5)
-boot.log('server enabled on port 80')
+def resetBtnFlash():
+    btn_flash = pin(0, pin.OUT)
+    btn_flash.off()
+    print("starting EventLoop")
 
-while True:
-  conn, addr = sock.accept()
-  boot.log(addr)
-  boot.log('incoming from: %s' % str(addr[0]))
-  
-  request = str(conn.recv(1024))
-  boot.log('req: %s' % request)
-  
-  conn.send('HTTP/1.1 200 OK\n')
-  conn.send('Content-Type: text/plain\n')
-  conn.send('Connection: close\n\n')
-  conn.send('Access-Control-Allow-Origin: *')
-  conn.sendall('Hello!')
-  conn.close()
+def main():
+    resetBtnFlash()
+    # do something in the main loop
+    import event
