@@ -6,6 +6,14 @@ from machine import Pin, I2C
 class PCA9685:
     def __init__(self, gpioScl=1, gpioSda=2, address=0x41):
         self.i2c = I2C(scl=Pin(gpioScl), sda=Pin(gpioSda))
+        scans = self.i2c.scan()
+        for res in scans:
+            if (res == 64):
+                address = 0x40
+            elif (res == 65):
+                address = 0x41
+            else:
+                continue
         self.address = address
         self.reset()
 

@@ -1,3 +1,3 @@
-wifi_ssid = "Kokivo"
-wifi_key = "oneplus6"
+wifi_ssid = "Portal"
+wifi_key = "littleStar"
 wifi_autoConnect = True

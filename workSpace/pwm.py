@@ -112,15 +112,15 @@ def disableAll():
 def blink(LED, lux=4095, dur=0.5, repeatFor=1):
     """
         Blink the "LED" "repeatFor" number of times with max "lux" brightness
-        at an interval of "dur" seconds
+        at an interval of "dur" milliseconds
     """
     LED = getMappedPin(LED)
     io.duty(LED, 0)
     for lim in range (0, repeatFor):
         io.duty(LED, lux)
-        utime.sleep(dur)
+        utime.sleep_ms(dur)
         io.duty(LED, 0)
-        utime.sleep(dur)
+        utime.sleep_ms(dur)
 
 def fade(LED, lux=4095, repeatFor=1):
     """

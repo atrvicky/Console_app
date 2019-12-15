@@ -160,7 +160,7 @@ def clear():
     write8(LCD_CLEARDISPLAY)  # command to clear display
     # _delay_microseconds(50)  # 3000 microsecond sleep recommended, clearing the display takes a long time
 
-def set_cursor(col, row):
+def setCursor(col, row):
     global lcd_rows
     """Move the cursor to an explicit column and row position."""
     # Clamp row to the last row of the display.
@@ -169,7 +169,7 @@ def set_cursor(col, row):
     # Set location.
     write8(LCD_SETDDRAMADDR | (col + LCD_ROW_OFFSETS[row]))
 
-def enable_display(enable):
+def enableDisplay(enable):
     global displaycontrol
     """Enable or disable the display.  Set enable to True to enable."""
     if enable:
@@ -178,7 +178,7 @@ def enable_display(enable):
         displaycontrol &= ~LCD_DISPLAYON
     write8(LCD_DISPLAYCONTROL | displaycontrol)
 
-def show_cursor(show):
+def showCursor(show):
     global displaycontrol
     """Show or hide the cursor.  Cursor is shown if show is True."""
     if show:
@@ -196,21 +196,21 @@ def blink(blink):
         displaycontrol &= ~LCD_BLINKON
     write8(LCD_DISPLAYCONTROL | displaycontrol)
 
-def move_left():
+def moveLeft():
     """Move display left one position."""
     write8(LCD_CURSORSHIFT | LCD_DISPLAYMOVE | LCD_MOVELEFT)
 
-def move_right():
+def moveRight():
     """Move display right one position."""
     write8(LCD_CURSORSHIFT | LCD_DISPLAYMOVE | LCD_MOVERIGHT)
 
-def set_left_to_right():
+def setLTR():
     global displaymode
     """Set text direction left to right."""
     displaymode |= LCD_ENTRYLEFT
     write8(LCD_ENTRYMODESET | displaymode)
 
-def set_right_to_left():
+def setRTL():
     global displaymode
     displaymode &= ~LCD_ENTRYLEFT
     write8(LCD_ENTRYMODESET | displaymode)
@@ -235,12 +235,12 @@ def message(text):
             line += 1
             # Move to left or right side depending on text direction.
             col = 0 if displaymode & LCD_ENTRYLEFT > 0 else lcd_columns-1
-            set_cursor(col, line)
+            setCursor(col, line)
         # Write the character to the display.
         else:
             write8(ord(char), True)
 
-def set_backlight(backlight):
+def setBacklight(backlight):
     """Enable or disable the backlight.  If PWM is not enabled (default), a
     non-zero backlight value will turn on the backlight and a zero value will
     turn it off.  If PWM is enabled, backlight can be any value from 0.0 to
@@ -270,7 +270,7 @@ def write8(value, char_mode=False, scrollDelay=0):
     enableIR1()
     enableIR2()
 
-def create_char(location, pattern):
+def createChar(location, pattern):
     # only position 0..7 are allowed
     location &= 0x7
     write8(LCD_SETCGRAMADDR | (location << 3))
