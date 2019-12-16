@@ -166,11 +166,6 @@ def scan_i2c():
     
 scan_i2c()
 
-def checkPWM():
-        dr = dir()
-        if ('pwm' not in dr):
-                import pwm
-
 # Handle the query from the GET request
 # Takes the query string as arg
 def handleGET(query):
@@ -189,6 +184,7 @@ def handleGET(query):
                         args = arg.split(',')
                         intArgs = [int(strArg) for strArg in args]
 
+                # http://192.168.4.1/?enableLED1&2000?/
                 if (func == 'enableLED1'):
                         pwm.enableLED1(arg)
                 elif (func == 'enableLED2'):
@@ -237,6 +233,7 @@ def handleGET(query):
                         sensors.autoscroll(intArgs[0], intArgs[1])
         else:
                 # function w/o args
+                # http://192.168.4.1/?toggleLED1?/
                 if (query == 'toggleLED1'):
                         pwm.toggleLED1()
                 elif (query == 'toggleLED2'):
@@ -275,7 +272,7 @@ def handleGET(query):
 # supports only live mode
 def createServer():
         if (wifi_state != WIFI_ERROR or wifi_state != WIFI_DISABLED or wifi_state != WIFI_ENABLED):
-                log('initiating webserver')
+                log('initiating server')
                 # create a socket obj
                 import socket, network
                 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -296,7 +293,7 @@ def createServer():
                         req = cxn.recv(500)
                         req = str(req)
                         log('request: %s'%req)
-                        sendBack = 'Conn Success!'
+                        sendBack = 'true'
 
                         # process the request here and only if it is not a favicon req
                         try:
