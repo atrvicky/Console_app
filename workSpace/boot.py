@@ -170,103 +170,10 @@ scan_i2c()
 # Takes the query string as arg
 def handleGET(query):
         gc.collect()
-        import pwm, sensors, gpio
-        if (query.find('&') > -1):
-                # function w/ args
-                query = query.split("&")
-                log('handlerPass: %s'%(query))
-                func = query[0]
-                arg = query[1]
-                if (arg.find(',') == -1):
-                        # has a single argument
-                        arg = int(arg)
-                else:
-                        args = arg.split(',')
-                        intArgs = [int(strArg) for strArg in args]
-
-                # http://192.168.4.1/?enableLED1&2000?/
-                if (func == 'enableLED1'):
-                        pwm.enableLED1(arg)
-                elif (func == 'enableLED2'):
-                        pwm.enableLED2(arg)
-                elif (func == 'enableLED3'):
-                        pwm.enableLED3(arg)
-                elif (func == 'enableAllLED'):
-                        pwm.enableAll(arg)
-                elif (func == 'brakeMotor'):
-                        pwm.brakeMotor(arg)
-                elif (func == 'lsetLCDBright'):
-                        pwm.setLCDBrightness(arg)
-                elif (func == 'togglePin'):
-                        gpio.togglePin(arg)
-                elif (func == 'releaseServo'):
-                        gpio.releaseServo(arg)
-                elif (func == 'readPin'):
-                        return gpio.readPin(arg)
-                elif (func == 'enableLCD'):
-                        sensors.enableDisplay(arg)
-                elif (func == 'showCursor'):
-                        sensors.showCursor(arg)
-                elif (func == 'blinkLCD'):
-                        sensors.blink(arg)
-                elif (func == 'enableLCDBacklight'):
-                        sensors.setBacklight(arg)
-                elif (func == 'printMsg'):
-                        sensors.message(arg)
-                elif (func == 'set1604'):
-                        sensors.set1604(arg)
-                elif (func == 'blink'):
-                        pwm.blink(intArgs[0], intArgs[1], intArgs[2], intArgs[3])
-                elif (func == 'fade'):
-                        pwm.fade(intArgs[0], intArgs[1], intArgs[2])
-                elif (func == 'runMotor'):
-                        pwm.runMotor(intArgs[0], intArgs[1])
-                elif (func == 'writePin'):
-                        gpio.writePin(intArgs[0], intArgs[1])
-                elif (func == 'runServo'):
-                        gpio.runServo(intArgs[0], intArgs[1], intArgs[2])                
-                elif (func == 'runServoAngle'):
-                        gpio.runServoAngle(intArgs[0], intArgs[1], intArgs[2])                
-                elif (func == 'setCursor'):
-                        sensors.setCursor(intArgs[0], intArgs[1])                
-                elif (func == 'autoscroll'):
-                        sensors.autoscroll(intArgs[0], intArgs[1])
-        else:
-                # function w/o args
-                # http://192.168.4.1/?toggleLED1?/
-                if (query == 'toggleLED1'):
-                        pwm.toggleLED1()
-                elif (query == 'toggleLED2'):
-                        pwm.toggleLED2()
-                elif (query == 'toggleLED3'):
-                        pwm.toggleLED3()
-                elif (query == 'disableLED1'):
-                        pwm.disableLED1()
-                elif (query == 'disableLED2'):
-                        pwm.disableLED2()
-                elif (query == 'disableLED3'):
-                        pwm.disableLED3()
-                elif (query == 'disableAllLED'):
-                        pwm.disableAll()
-                elif (query == 'brakeAllMotors'):
-                        pwm.brakeAllMotors()
-                elif (query == 'readIR1'):
-                        return sensors.readIR1()
-                elif (query == 'readIR2'):
-                        return sensors.readIR2()
-                elif (query == 'home'):
-                        sensors.home()
-                elif (query == 'clear'):
-                        sensors.clear()
-                elif (query == 'moveCursorLeft'):
-                        sensors.moveLeft()
-                elif (query == 'moveCursorRight'):
-                        sensors.moveRight()
-                elif (query == 'LCDLTR'):
-                        sensors.setLTR()
-                elif (query == 'LCDRTL'):
-                        sensors.setRTL()
-
+        import pwm, sensors, gpio, utime
+        query = query.replace('&','\r\n')
+        query = query.replace('%20',' ')
+        exec(query, {'pwm': pwm, 'gpio': gpio, 'sensors': sensors, 'utime': utime})
 
 # create a webserver to read all the inputs from the remote
 # supports only live mode
